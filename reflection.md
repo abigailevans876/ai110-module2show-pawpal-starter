@@ -1,17 +1,32 @@
 # PawPal+ Project Reflection
 
 ## 1. System Design
+### Core Actions
+1. **Add & Manage Pets:** Register pets with vital statistics (species, breed, age) and special care notes.
+2. **Schedule Daily Tasks:** Set time-stamped care obligations (walks, medication, feedings) tied directly to a specific pet.
+3. **Daily Agenda Tracking:** Filter and view all tasks due on the current day, with the ability to mark them completed.
 
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+
+The design uses an object-oriented domain layer separating data models from scheduling operations:
+- **`Pet` (Dataclass):** Encapsulates pet identity and care requirements.
+- **`Task` (Dataclass):** Encapsulates task metadata, target execution timestamp, completion state, and an explicit foreign key reference (`pet_id`) linking it to a `Pet`.
+- **`Owner` (Dataclass):** Represents the user entity who maintains 1-to-many ownership over `Pet` instances.
+- **`Scheduler` (Service Class):** Decouples schedule management from the entities themselves. It handles filtering (by date, pet, or status) and task lifecycle updates without burdening the data classes with operational queries.
 - What classes did you include, and what responsibilities did you assign to each?
+
 
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+Design Changes & AI Review Insights
+- **Decoupled Task Ownership:** Initially, tasks could have been stored directly inside each `Pet` object (`Pet.tasks`). However, moving task collection and filtering into a dedicated `Scheduler` avoids tight coupling and simplifies global operations like "Show all tasks across all pets for today."
+- **Lightweight Identifiers:** Assigned auto-generated short UUIDs (`pet_id`, `task_id`) so entities reference each other cleanly by ID rather than keeping circular object references.
+- **Dataclass `field(default_factory=...)` Pattern:** Used `default_factory` for mutable default parameters (like `pets: List[Pet]`) to prevent Python's shared-state mutable default argument trap.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs

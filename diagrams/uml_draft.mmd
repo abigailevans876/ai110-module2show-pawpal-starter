@@ -1,0 +1,46 @@
+classDiagram
+    direction TB
+
+    class Pet {
+        +str pet_id
+        +str name
+        +str species
+        +str breed
+        +int age
+        +str notes
+        +get_summary() str
+    }
+
+    class Task {
+        +str task_id
+        +str pet_id
+        +str title
+        +str task_type
+        +datetime due_datetime
+        +bool is_completed
+        +mark_complete() void
+        +mark_pending() void
+    }
+
+    class Owner {
+        +str owner_id
+        +str name
+        +str email
+        +list~Pet~ pets
+        +add_pet(pet: Pet) void
+        +remove_pet(pet_id: str) bool
+        +get_pets() list~Pet~
+    }
+
+    class Scheduler {
+        +list~Task~ tasks
+        +add_task(task: Task) void
+        +get_tasks_for_date(target_date: date) list~Task~
+        +get_tasks_for_pet(pet_id: str) list~Task~
+        +get_pending_tasks() list~Task~
+        +complete_task(task_id: str) bool
+    }
+
+    Owner "1" *-- "0..*" Pet : owns / manages
+    Pet "1" -- "0..*" Task : associated with
+    Scheduler "1" o-- "0..*" Task : organizes & tracks

@@ -54,6 +54,11 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 #   ...
 ```
 
+Today's Schedule
+08:00 AM — Luna: Morning walk
+08:30 AM — Mittens: Breakfast
+06:00 PM — Luna: Evening walk
+
 ## 🧪 Testing PawPal+
 
 ```bash
