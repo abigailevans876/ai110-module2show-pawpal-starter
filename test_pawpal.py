@@ -58,6 +58,15 @@ def test_filter_tasks_by_completion_and_pet_name():
     ]
 
 
+def test_scheduler_handles_pet_with_no_tasks():
+    pet = make_pet("Luna")
+    scheduler = Scheduler(Owner(name="Alex", email="alex@example.com", pets=[pet]))
+
+    assert scheduler.sort_by_time() == []
+    assert scheduler.filter_tasks() == []
+    assert scheduler.find_conflicts() == []
+
+
 def test_completing_daily_task_creates_occurrence_tomorrow_at_same_time():
     pet = make_pet("Luna")
     task = Task("Morning walk", datetime(2020, 1, 1, 8, 30))
