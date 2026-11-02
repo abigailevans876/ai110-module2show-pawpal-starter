@@ -119,6 +119,7 @@ def test_find_conflicts_reports_tasks_at_the_same_time():
     warnings = scheduler.find_conflicts()
 
     assert len(warnings) == 1
+    assert "2026-11-01 at 08:00 AM" in warnings[0]
     assert "Luna — Morning walk" in warnings[0]
     assert "Mittens — Breakfast" in warnings[0]
 

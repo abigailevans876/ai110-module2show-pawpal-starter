@@ -8,33 +8,18 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-
-The design uses an object-oriented domain layer separating data models from scheduling operations:
-- **`Pet` (Dataclass):** Encapsulates pet identity and care requirements.
-- **`Task` (Dataclass):** Encapsulates task metadata, target execution timestamp, completion state, and an explicit foreign key reference (`pet_id`) linking it to a `Pet`.
-- **`Owner` (Dataclass):** Represents the user entity who maintains 1-to-many ownership over `Pet` instances.
-- **`Scheduler` (Service Class):** Decouples schedule management from the entities themselves. It handles filtering (by date, pet, or status) and task lifecycle updates without burdening the data classes with operational queries.
-- What classes did you include, and what responsibilities did you assign to each?
-
+The initial UML separated the `Owner`, `Pet`, and `Task` data models from a `Scheduler` service. In the final design, `Owner` owns a list of pets; each `Pet` stores its own task list; `Scheduler` holds an `Owner` reference and queries the owner's pets and tasks to sort, filter, build schedules, complete recurring tasks, and find conflicts. `Task` stores description, due date/time, recurrence frequency, and completion state. The final diagram in `diagrams/uml_final.mmd` reflects these relationships and methods.
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
-
-Design Changes & AI Review Insights
-- **Decoupled Task Ownership:** Initially, tasks could have been stored directly inside each `Pet` object (`Pet.tasks`). However, moving task collection and filtering into a dedicated `Scheduler` avoids tight coupling and simplifies global operations like "Show all tasks across all pets for today."
-- **Lightweight Identifiers:** Assigned auto-generated short UUIDs (`pet_id`, `task_id`) so entities reference each other cleanly by ID rather than keeping circular object references.
-- **Dataclass `field(default_factory=...)` Pattern:** Used `default_factory` for mutable default parameters (like `pets: List[Pet]`) to prevent Python's shared-state mutable default argument trap.
+The design stayed with pet-owned tasks rather than moving every task into a separate scheduler-owned collection. This keeps the relationship intuitive while the scheduler can still perform household-wide queries through `Owner.get_all_tasks()`. During review, daily recurrence was clarified to mean tomorrow at the same time, based on the current date; it no longer depends on a stale task date.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers each task's due date and time, pet, completion state, and recurrence frequency. It sorts by due datetime, filters by pet and completion, and warns about exact date-and-time matches. It does not model task duration, priority, owner availability, or preferences, so it is a task organizer rather than an optimizer. Exact-time ordering and conflicts are the most important constraints in this first implementation because task duration and priority are not fields in the current `Task` model.
 
 **b. Tradeoffs**
 
@@ -46,11 +31,11 @@ The scheduler detects conflicts only when two tasks have the exact same due date
 
 **a. How you used AI**
 
-I used AI assistance to implement and review the scheduling methods. For sorting, the compact `sorted(tasks, key=lambda pair: pair[1].due_datetime)` expression avoids a manual sorting loop. I kept it because the key makes the ordering criterion explicit and is straightforward to read.
+AI chat was most useful for exploring the `sorted()` key and `timedelta` recurrence patterns, drafting focused tests, reviewing edge cases, and iterating on UI and documentation. Keeping each phase's work focused on a distinct goal helped separate implementation, verification, and final-polish questions; documenting phase outcomes also made it easier to carry decisions forward.
 
 **b. Judgment and verification**
 
-I verified the sorting, filtering, recurring-task, and conflict behavior with automated tests and by running `python main.py`. Daily recurrence is tested against tomorrow's date while preserving the original scheduled time.
+One suggestion I modified during review was to calculate a daily task's next date by adding one day to its previous due datetime. That can leave a stale or overdue task in the past, so I aligned recurrence with the requirement to schedule for tomorrow and preserve the original time. I kept the readable `sorted(..., key=lambda ...)` approach rather than replacing it with a more manual sorting loop. I checked the behavior with automated tests and the CLI demo.
 
 ---
 
@@ -58,13 +43,11 @@ I verified the sorting, filtering, recurring-task, and conflict behavior with au
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+The 10 tests cover task completion and addition, chronological sorting, case-insensitive pet/status filtering, empty schedules, daily and weekly recurrence, one-time tasks, and both matching-time and non-conflicting schedules. These checks cover the main algorithms and protect key edge cases, such as a pet with no tasks and a task that should not recur.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+I have good but not exhaustive confidence: all 10 automated tests pass, and the CLI example exercises the main flows. I would next test date boundaries, timezone-aware datetimes, duplicate names, and the Streamlit interaction paths with automated UI tests.
 
 ---
 
@@ -72,12 +55,12 @@ I verified the sorting, filtering, recurring-task, and conflict behavior with au
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+The scheduler methods are small and focused, and the demo and UI call into that shared logic rather than reproducing sorting and filtering themselves.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+I would let users choose a task date directly instead of limiting task creation to an hour on the current day. I would also add automated tests for the Streamlit interaction paths and clearer validation for unusual date and time inputs.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+Being the lead architect means deciding which suggestions fit the real requirements, checking how changes affect connected parts of the system, and verifying behavior instead of trusting plausible-looking code. AI accelerated implementation and review, but I remained responsible for scope, tradeoffs, tests, and the final design.

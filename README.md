@@ -1,107 +1,84 @@
-# PawPal+ (Module 2 Project)
+# PawPal+
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+PawPal+ is a simple pet-care scheduler with a Python domain model and a Streamlit interface. It helps an owner keep track of tasks, view schedules, and receive warnings when tasks have an exact date-and-time conflict.
 
-## Scenario
+## Features
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+- Register pets and assign daily, weekly, or one-time care tasks.
+- Browse tasks by pet and completion status.
+- View a date's tasks in chronological order.
+- Mark tasks complete; daily and weekly tasks automatically create their next occurrence.
+- Show actionable warnings when two tasks have the exact same date and time.
 
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
+## Run the application
 
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
-
-## What you will build
-
-Your final app should:
-
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
-
-## Getting started
-
-### Setup
+Install the requirements in a virtual environment, then launch the Streamlit UI:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+streamlit run app.py
 ```
 
-### Suggested workflow
+The UI lets an owner register pets, schedule tasks for today, filter the task list, review today's schedule, inspect conflicts, and complete pending tasks.
 
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
+## Smarter Scheduling
 
-## 🖥️ Sample Output
+| Feature | Method | Behavior |
+|---------|--------|----------|
+| Time sorting | `Scheduler.sort_by_time()` | Orders tasks chronologically by due date and time. |
+| Filtering | `Scheduler.filter_tasks()` | Filters all tasks by completion state, pet name, or both. Pet-name matching is case-insensitive. |
+| Date schedule | `Scheduler.get_schedule_for_date()` | Selects tasks for a date and returns them in chronological order. |
+| Recurring tasks | `Scheduler.complete_task()` | Marks a task complete and creates its next occurrence for tomorrow at the same time (daily), one week later (weekly), or no new task (once). |
+| Conflict detection | `Scheduler.find_conflicts()` | Returns warning messages when tasks share an exact date and time, including tasks for different pets. It does not check overlapping durations. |
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+## Demo Walkthrough
 
-```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
-```
+Run the command-line demonstration with `python main.py`. It adds tasks out of order, prints today's schedule in chronological order, filters Luna's pending tasks, reports an exact-time conflict, and completes a recurring task. The Streamlit UI exposes the same scheduler features with tables and warning messages.
 
-Today's Schedule
+Example CLI output from a successful run:
+
+```text
+Today's Schedule (sorted)
 08:00 AM — Luna: Morning walk
 08:00 AM — Mittens: Breakfast
 06:00 PM — Luna: Evening walk
 
-## 🧪 Testing PawPal+
+Luna's pending tasks
+Luna: Evening walk
+Luna: Morning walk
+
+Conflict warnings
+Warning: Conflict on 2026-11-01 at 08:00 AM: Luna — Morning walk and Mittens — Breakfast
+
+Recurring task created: Evening walk (2026-11-02 06:00 PM)
+```
+
+## Testing PawPal+
+
+Run the automated test suite with:
 
 ```bash
 python -m pytest
 ```
 
-The automated tests cover task completion and adding tasks, chronological sorting, filtering by completion and pet name, daily and weekly recurrence, one-time tasks, exact-time conflict warnings, and pets with no tasks.
-
-**Confidence level:** ★★★★☆ (4/5). All 10 automated tests pass for the behaviors above; this is a focused suite and does not cover every possible date/time or user-interface scenario.
+The tests cover task creation and completion, chronological sorting, filtering by pet and status, empty schedules, daily and weekly recurrence, one-time tasks, and exact-time conflict warnings.
 
 Successful test run:
 
-```
+```text
 ============================= test session starts ==============================
-platform darwin -- Python 3.13.5, pytest-8.3.4, pluggy-1.5.0
+platform darwin -- Python 3.13.7, pytest-9.2.0, pluggy-1.7.0
 rootdir: /Users/abigailevans/ai110-module2show-pawpal-starter
-plugins: anyio-4.7.0
+plugins: anyio-4.16.0
 collected 10 items
 
 test_pawpal.py ..........                                                [100%]
 
-============================== 10 passed in 0.03s ==============================
+============================== 10 passed in 0.04s ==============================
 ```
 
-## Smarter Scheduling
+**Confidence level:** ★★★★☆ (4/5). The focused suite verifies the core scheduling behaviors, but does not cover every date/time edge case or exercise the Streamlit UI end to end.
 
-| Feature | Method(s) | Behavior |
-|---------|-----------|----------|
-| Task sorting | `Scheduler.sort_by_time()` | Returns tasks ordered chronologically by their `due_datetime`. |
-| Filtering | `Scheduler.filter_tasks()` | Filters across all pets by completion status, pet name, or both. Pet names are compared without case sensitivity. |
-| Conflict detection | `Scheduler.find_conflicts()` | Returns warning strings for any pair of tasks with the exact same date and time, including tasks belonging to different pets. It does not raise an exception or check overlapping durations. |
-| Recurring tasks | `Scheduler.complete_task()` | Marks a task complete and creates its next occurrence tomorrow at the same time for `daily` tasks or one week after the scheduled date for `weekly` tasks. `once` tasks do not recur. |
-
-`Scheduler.get_schedule_for_date()` and `Scheduler.get_today_schedule()` use the sorting method to return chronological schedules. The `main.py` terminal demo adds tasks out of order, prints filtered tasks, displays conflict warnings, and demonstrates a recurring task.
-
-## 📸 Demo Walkthrough
-
-Describe your app in numbered steps so a reader can follow along without watching a video:
-
-1. Run `python main.py` to see the terminal scheduling demo.
-2. Review the chronologically sorted schedule, despite the tasks being added out of order.
-3. Check the pending tasks filtered for Luna.
-4. See the warning for Luna and Mittens' tasks scheduled at the same time.
-5. See the next occurrence printed after a daily task is completed.
-
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+The final class relationships and scheduler methods are shown in [uml_final.mmd](uml_final.mmd).

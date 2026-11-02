@@ -68,7 +68,6 @@ class Owner:
         """Return all tasks paired with their pets."""
         return [(pet, task) for pet in self.pets for task in pet.tasks]
 
-
 class Scheduler:
     """Sort, filter, and coordinate tasks for an owner."""
 
@@ -145,7 +144,7 @@ class Scheduler:
                 if other_task.due_datetime != task.due_datetime:
                     break
                 warnings.append(
-                    f"Conflict at {task.due_datetime:%I:%M %p}: "
+                    f"Conflict on {task.due_datetime:%Y-%m-%d at %I:%M %p}: "
                     f"{pet.name} — {task.description} and "
                     f"{other_pet.name} — {other_task.description}"
                 )
