@@ -38,8 +38,7 @@ Design Changes & AI Review Insights
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The scheduler detects conflicts only when two tasks have the exact same due date and time; it does not calculate whether tasks with durations overlap. This keeps conflict detection lightweight and gives the owner a useful warning without requiring duration data, but it can miss tasks that are scheduled close together and would overlap in practice. For this simple scheduler, exact-time matching is a clear first step.
 
 ---
 

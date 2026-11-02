@@ -56,7 +56,7 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 
 Today's Schedule
 08:00 AM — Luna: Morning walk
-08:30 AM — Mittens: Breakfast
+08:00 AM — Mittens: Breakfast
 06:00 PM — Luna: Evening walk
 
 ## 🧪 Testing PawPal+
@@ -75,9 +75,16 @@ Sample test output:
 # Paste your pytest output here
 ```
 
-## 📐 Smarter Scheduling
+## Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
+| Feature | Method(s) | Behavior |
+|---------|-----------|----------|
+| Task sorting | `Scheduler.sort_by_time()` | Returns tasks ordered chronologically by their `due_datetime`. |
+| Filtering | `Scheduler.filter_tasks()` | Filters across all pets by completion status, pet name, or both. Pet names are compared without case sensitivity. |
+| Conflict detection | `Scheduler.find_conflicts()` | Returns warning strings for any pair of tasks with the exact same date and time, including tasks belonging to different pets. It does not raise an exception or check overlapping durations. |
+| Recurring tasks | `Scheduler.complete_task()` | Marks a task complete and creates its next occurrence one day later for `daily` tasks or one week later for `weekly` tasks. `once` tasks do not recur. |
+
+`Scheduler.get_schedule_for_date()` and `Scheduler.get_today_schedule()` use the sorting method to return chronological schedules. The `main.py` terminal demo adds tasks out of order, prints filtered tasks, displays conflict warnings, and demonstrates a recurring task.
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
@@ -90,10 +97,10 @@ Sample test output:
 
 Describe your app in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Run `python main.py` to see the terminal scheduling demo.
+2. Review the chronologically sorted schedule, despite the tasks being added out of order.
+3. Check the pending tasks filtered for Luna.
+4. See the warning for Luna and Mittens' tasks scheduled at the same time.
+5. See the next occurrence printed after a daily task is completed.
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
