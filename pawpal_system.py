@@ -118,7 +118,10 @@ class Scheduler:
         task.mark_complete()
 
         if task.frequency == "daily":
-            next_due = task.due_datetime + timedelta(days=1)
+            next_due = datetime.combine(
+                datetime.now().date() + timedelta(days=1),
+                task.due_datetime.time(),
+            )
         elif task.frequency == "weekly":
             next_due = task.due_datetime + timedelta(weeks=1)
         else:

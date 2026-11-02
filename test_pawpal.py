@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta
 
 from pawpal_system import Owner, Pet, Scheduler, Task
 
@@ -58,9 +58,9 @@ def test_filter_tasks_by_completion_and_pet_name():
     ]
 
 
-def test_completing_daily_task_creates_next_day_occurrence():
+def test_completing_daily_task_creates_occurrence_tomorrow_at_same_time():
     pet = make_pet("Luna")
-    task = Task("Morning walk", datetime(2026, 11, 1, 8, 30))
+    task = Task("Morning walk", datetime(2020, 1, 1, 8, 30))
     pet.add_task(task)
     scheduler = Scheduler(Owner(name="Alex", email="alex@example.com", pets=[pet]))
 
@@ -68,7 +68,8 @@ def test_completing_daily_task_creates_next_day_occurrence():
 
     assert task.is_completed
     assert next_task is not None
-    assert next_task.due_datetime == task.due_datetime + timedelta(days=1)
+    assert next_task.due_datetime.date() == date.today() + timedelta(days=1)
+    assert next_task.due_datetime.time() == time(8, 30)
     assert next_task.frequency == task.frequency
     assert next_task in pet.tasks
 

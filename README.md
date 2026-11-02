@@ -82,16 +82,9 @@ Sample test output:
 | Task sorting | `Scheduler.sort_by_time()` | Returns tasks ordered chronologically by their `due_datetime`. |
 | Filtering | `Scheduler.filter_tasks()` | Filters across all pets by completion status, pet name, or both. Pet names are compared without case sensitivity. |
 | Conflict detection | `Scheduler.find_conflicts()` | Returns warning strings for any pair of tasks with the exact same date and time, including tasks belonging to different pets. It does not raise an exception or check overlapping durations. |
-| Recurring tasks | `Scheduler.complete_task()` | Marks a task complete and creates its next occurrence one day later for `daily` tasks or one week later for `weekly` tasks. `once` tasks do not recur. |
+| Recurring tasks | `Scheduler.complete_task()` | Marks a task complete and creates its next occurrence tomorrow at the same time for `daily` tasks or one week after the scheduled date for `weekly` tasks. `once` tasks do not recur. |
 
 `Scheduler.get_schedule_for_date()` and `Scheduler.get_today_schedule()` use the sorting method to return chronological schedules. The `main.py` terminal demo adds tasks out of order, prints filtered tasks, displays conflict warnings, and demonstrates a recurring task.
-
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
 
 ## 📸 Demo Walkthrough
 

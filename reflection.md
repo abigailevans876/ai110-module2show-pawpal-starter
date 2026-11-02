@@ -46,13 +46,11 @@ The scheduler detects conflicts only when two tasks have the exact same due date
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used AI assistance to implement and review the scheduling methods. For sorting, the compact `sorted(tasks, key=lambda pair: pair[1].due_datetime)` expression avoids a manual sorting loop. I kept it because the key makes the ordering criterion explicit and is straightforward to read.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+I verified the sorting, filtering, recurring-task, and conflict behavior with automated tests and by running `python main.py`. Daily recurrence is tested against tomorrow's date while preserving the original scheduled time.
 
 ---
 
